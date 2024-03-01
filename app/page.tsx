@@ -1,6 +1,17 @@
+"use client";
+
 import Image from "next/image";
+import React, { useState, useEffect } from 'react';
+import {Canvas} from "@/app/canvas";
 
 export default function Home() {
+
+
+  useEffect(() => {
+
+  });
+
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
@@ -107,7 +118,10 @@ export default function Home() {
             Instantly deploy your Next.js site to a shareable URL with Vercel.
           </p>
         </a>
+        <Canvas/>
+
       </div>
+
     </main>
   );
 }
