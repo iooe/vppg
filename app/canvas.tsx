@@ -1,22 +1,24 @@
 "use client";
 
 import {Layer} from "@/app/Services/Board/layer";
-import {Player} from "@/app/Services/Board/player";
+import {Agent} from "@/app/Services/Board/agent";
 import {useEffect, useState} from "react";
-
-interface CanvasData {
-    sizeX: number,
-    sizeY: number,
-}
+import AgentData from "@/app/Services/Agent/AgentData";
+import ActionMoveDown from "@/app/Services/Agent/Actions/ActionMoveDown";
+import ActionMoveUp from "@/app/Services/Agent/Actions/ActionMoveUp";
+import ActionMoveLeft from "@/app/Services/Agent/Actions/ActionMoveLeft";
+import ActionMoveRight from "@/app/Services/Agent/Actions/ActionMoveRight";
+import CanvasData from "@/app/Services/CanvasData";
+import Action from "@/app/Services/Agent/Actions/Action";
+import Statement from "@/app/Services/Statement/Statement";
+import ArgumentAgentCoordinates from "@/app/Services/Agent/Arguments/ArgumentAgentCoordinates";
 
 interface Agent {
-    id: string,
-    width: number,
-    height: number,
     position: {
         x: number,
         y: number
     },
+    agentData: AgentData,
     stack: Array<any>
 }
 
@@ -26,36 +28,42 @@ export const Canvas = ({}) => {
         xMultiplierModifier = 100,
         yMultiplierModifier = 100;
 
-    const canvasData: CanvasData = {
-        sizeX: 5,
-        sizeY: 5
-    };
+    const canvasData = new CanvasData(5, 5);
+
+    const agent1 = new AgentData("agent1")
+    agent1.height = 50;
+    agent1.width = 50;
 
     const [agents, setAgents] = useState<[Agent]>(
             [
                 {
-                    id: "agent1",
-                    width: 50,
-                    height: 50,
                     position: {
                         x: 0,
                         y: 0,
                     },
+
+                    agentData: agent1,
                     stack: [
                         {
                             type: "if",
                             statement: {
-
+                                argumentA: "agent_position",
+                                argumentB: {x: 5, y: 5},
+                                symbol: "<="
                             },
                             actions: [
-                                {
-                                    key: "MOVE",
-                                    value: "down"
-                                },
-                                {
-                                    key: "MOVE",
-                                    value: "right"
-                                }
+                                ActionMoveRight
+                            ]
+                        },
+                        {
+                            type: "if",
+                            statement: {
+                                argumentA: "agent_position_right",
+                                argumentB: "wall",
+                                symbol: "==="
+                            },
+                            actions: [
+                                ActionMoveDown
                             ]
                         }
                     ]
@@ -64,60 +72,47 @@ export const Canvas = ({}) => {
 
     );
 
-    // setTimeout(() => {
-    //     const modifiedAgents = [...agents];
-    //
-    //     modifiedAgents[0].position.y = 3
-    //     modifiedAgents[0].position.x = 3
-    //
-    //     setAgents(modifiedAgents)
-    //
-    // }, 1000)
-
-
-    const handles = {
-        onMove: (canvasData: CanvasData, agent: Agent, value: string) => {
-
-            if(value === "top" && ((agent.position.y - 1) >= 0)) {
-                agent.position.y = agent.position.y - 1;
-            }
-
-            if(value === "down" && ((agent.position.y + 1) < canvasData.sizeY)) {
-                agent.position.y = agent.position.y + 1;
-            }
-
-
-            if(value === "left" && ((agent.position.x - 1) >= 0)) {
-                agent.position.x = agent.position.x - 1;
-            }
-
-
-            if(value === "right" && ((agent.position.x + 1) < canvasData.sizeX)) {
-                agent.position.x = agent.position.x + 1;
-            }
-
-
-            return agent.position;
-        }
-    }
+    // new Statement(new ArgumentAgentCoordinates(agent1))
 
     useEffect(() => {
         const intervalId = setInterval(() => {
 
             const modifiedAgents =  agents.map((agent) => {
                 agent.stack.map((stack) => {
-                    stack.actions.map((action) => {
-                        if(action.key === "MOVE") {
-                            agent.position = handles.onMove(canvasData, agent, action.value)
-                        }
-                    })
+                    if(stack.type === "if") {
+
+                            if(
+                                (stack.statement.argumentA === "agent_position" &&
+                                    ((stack.statement.symbol === "<=" && agent.agentData.coordinateX <= stack.statement.argumentB.x
+                                            && agent.agentData.coordinateY<= stack.statement.argumentB.y)
+                                        || (stack.statement.symbol === "===" && agent.agentData.coordinateX === stack.statement.argumentB.x
+                                            && agent.agentData.coordinateY=== stack.statement.argumentB.y)
+
+                                        || (stack.statement.symbol === ">=" && agent.agentData.coordinateX >= stack.statement.argumentB.x
+                                            && agent.agentData.coordinateY>= stack.statement.argumentB.y))
+                                )
+
+                                || (stack.statement.argumentA === "agent_position_right" && (
+                                    (stack.statement.argumentB === "wall" && ((agent.agentData.coordinateX + 1) >= canvasData.sizeX))
+                                ))
+                            ) {
+                                    stack.actions.map((action: Action) => {
+                                        const instance = (new action(agent.agentData, canvasData));
+
+                                        if(instance.isExecutable()) {
+                                            instance.execute()
+                                        }
+                                    })
+                            }
+
+                    }
                 })
 
                 return agent;
             })
 
             setAgents(modifiedAgents)
-        }, 1000);
+        }, 200);
 
         return () => clearInterval(intervalId)
 
@@ -135,12 +130,12 @@ export const Canvas = ({}) => {
             >
 
                 {agents.map((agent, y) => (
-                    <Player
-                        key={agent.id}
-                        id={agent.id}
-                        x={agent.position.x * xMultiplierModifier} y={agent.position.y * yMultiplierModifier}
-                        width={agent.width}
-                        height={agent.height}
+                    <Agent
+                        key={agent.agentData.id}
+                        id={agent.agentData.id}
+                        x={agent.agentData.coordinateX * xMultiplierModifier} y={agent.agentData.coordinateY * yMultiplierModifier}
+                        width={agent.agentData.width}
+                        height={agent.agentData.height}
                     />
                 ))}
 

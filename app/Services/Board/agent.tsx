@@ -10,7 +10,7 @@ interface TextProps {
 };
 
 
-export const Player = ({id, x, y, width, height}: TextProps) => {
+export const Agent = ({id, x, y, width, height}: TextProps) => {
 
     return (
 
