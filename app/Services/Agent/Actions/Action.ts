@@ -3,7 +3,8 @@ import CanvasData from "@/app/Services/CanvasData";
 
 export default class Action {
 
-    protected _key:string = "ACTION";
+    protected static _key:string = "ACTION:KEY";
+    protected static _title:string = "ACTION:TITLE";
     protected _agentData: AgentData;
     protected _canvasData: CanvasData;
     public constructor(agentData: AgentData, canvasData: CanvasData) {
@@ -11,11 +12,20 @@ export default class Action {
         this._canvasData = canvasData;
     }
 
-    public execute() {
-
+    public execute(): AgentData {
+        return this._agentData
     }
 
     public isExecutable():boolean {
         return true;
     }
+
+    static get key(): string {
+        return this._key;
+    }
+
+    static get title(): string {
+        return this._title;
+    }
+
 }

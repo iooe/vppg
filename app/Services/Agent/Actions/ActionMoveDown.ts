@@ -3,17 +3,15 @@ import AgentData from "@/app/Services/Agent/AgentData";
 import CanvasData from "@/app/Services/CanvasData";
 
 export default class ActionMoveDown extends Action {
+    protected static _title:string = "ACTION:DOWN";
+
     constructor(agentData: AgentData, canvasData: CanvasData) {
         super(agentData, canvasData);
-        this._key = "MOVE:DOWN";
     }
 
     public execute() {
         this._agentData.coordinateY =  this._agentData.coordinateY + 1;
-    }
-
-    public getKey() {
-        return this._key
+        return this._agentData
     }
 
     public isExecutable() {
