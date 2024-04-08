@@ -1,13 +1,16 @@
 import Argument from "@/app/Services/Agent/Arguments/Argument";
-import Rule from "@/app/Services/Agent/Rules/Rule";
+import MasterRule from "@/app/Services/Agent/Rules/MasterRule";
+import AgentData from "@/app/Services/Agent/AgentData";
+import ArgumentAgentCoordinates from "@/app/Services/Agent/Arguments/ArgumentAgentCoordinates";
+import Coordinates from "@/app/Services/Data/Coordinates";
 
 export default class Statement {
 
     protected _argumentA: Argument;
     protected _argumentB: Argument;
-    protected _rule: Rule;
+    protected _rule: MasterRule;
 
-    constructor(argumentA: Argument, argumentB: Argument, rule: Rule) {
+    constructor(argumentA: Argument, argumentB: Argument, rule: MasterRule) {
         this._argumentA = argumentA;
         this._argumentB = argumentB;
         this._rule = rule;
@@ -15,5 +18,15 @@ export default class Statement {
 
     public verify():boolean {
         return this._rule.execute(this._argumentA, this._argumentB);
+    }
+
+    public updateData(agent: AgentData) {
+        if(this._argumentA instanceof ArgumentAgentCoordinates) {
+            this._argumentA = new ArgumentAgentCoordinates(new Coordinates(agent.coordinateX, agent.coordinateY));
+        }
+
+        if(this._argumentB instanceof ArgumentAgentCoordinates) {
+            this._argumentB = new ArgumentAgentCoordinates(new Coordinates(agent.coordinateX, agent.coordinateY));
+        }
     }
 }

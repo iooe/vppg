@@ -6,7 +6,6 @@ export default class ActionMoveRight extends Action {
     protected static _title:string = "ACTION:RIGHT";
     constructor(agentData: AgentData,  canvasData: CanvasData) {
         super(agentData, canvasData);
-
     }
 
     public execute() {

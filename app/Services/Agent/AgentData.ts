@@ -49,6 +49,10 @@ export default class AgentData {
         this._coordinateY = value;
     }
 
+    public setCoordinateY(value: number) {
+        this._coordinateY = value;
+    }
+
     public setCoordinates(x: number, y: number) {
         this._coordinateX = x;
         this._coordinateY = y;
