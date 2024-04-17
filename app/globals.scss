@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --background: 0 0% 100%;
+        --foreground: 0 0% 3.9%;
+
+        --card: 0 0% 100%;
+        --card-foreground: 0 0% 3.9%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 0 0% 3.9%;
+
+        --primary: 0 0% 9%;
+        --primary-foreground: 0 0% 98%;
+
+        --secondary: 0 0% 96.1%;
+        --secondary-foreground: 0 0% 9%;
+
+        --muted: 0 0% 96.1%;
+        --muted-foreground: 0 0% 45.1%;
+
+        --accent: 0 0% 96.1%;
+        --accent-foreground: 0 0% 9%;
+
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+
+        --border: 0 0% 89.8%;
+        --input: 0 0% 89.8%;
+        --ring: 0 0% 3.9%;
+
+        --radius: 0.5rem;
+    }
+
+    .dark {
+        --background: 0 0% 3.9%;
+        --foreground: 0 0% 98%;
+
+        --card: 0 0% 3.9%;
+        --card-foreground: 0 0% 98%;
+
+        --popover: 0 0% 3.9%;
+        --popover-foreground: 0 0% 98%;
+
+        --primary: 0 0% 98%;
+        --primary-foreground: 0 0% 9%;
+
+        --secondary: 0 0% 14.9%;
+        --secondary-foreground: 0 0% 98%;
+
+        --muted: 0 0% 14.9%;
+        --muted-foreground: 0 0% 63.9%;
+
+        --accent: 0 0% 14.9%;
+        --accent-foreground: 0 0% 98%;
+
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+
+        --border: 0 0% 14.9%;
+        --input: 0 0% 14.9%;
+        --ring: 0 0% 83.1%;
+    }
+
+
+    canvas {
+        width: 100%;
+        height: 100%;
+    }
+
+    .canvas-container {
+        width: 100%;
+        height: 500px;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+.command-button {
+    border-radius: 2px;
+    margin: 2px;
+
+}
+
+.command-button--blue {
+    background-color: #6565fb;
+    color: #dedeff;
+}
+
+.command-button--red {
+    background-color: #fb6565;
+    color: #ffdede;
+}
+
+.command-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background: #dfdfdf;
+    padding: 20px;
+    position: absolute;
+    top: 0;
+    transform: translateX(-150%);
+}
+
+.commands-stack {
+
+}
+
+.command-droppable-zone {
+    padding: 20px;
+}
+.command-title {
+    border-radius: 5px;
+    background: #9191f6;
+    font-weight: 600;
+    padding: 10px;
+    font-size: 1.3em;
+    position: relative;
+    display: flex;
+
+    &-body {
+        margin: 0 10px;
+        display: flex;
+    }
+
+    &-icon {
+        margin: 0 5px;
+    }
+}
+
+
+.action-title {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.command-cursor {
+    position: absolute;
+
+    transform: translateY(15%) translateX(-200%);
+}
+
+.action-title--focused {
+    outline: 4px solid #000000b3;
+
+}
+
+.command-title--focused {
+    outline: 4px solid #000000b3;
+}
+
+.sidebar {
+    position: absolute;
+    right: 20%;
+    top: 15%;
+    width: 300px;
+}
+
+.sidebar-item {
+    position: relative;
+}
+
+.menubar {
+    width: fit-content;
+    margin-left: -5px;
+}
+
+.canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding-top: 80px;
+    z-index: -1;
+}

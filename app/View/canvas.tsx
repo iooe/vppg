@@ -8,8 +8,7 @@ import ActionMoveDown from "@/app/Services/Agent/Actions/ActionMoveDown";
 import ActionMoveRight from "@/app/Services/Agent/Actions/ActionMoveRight";
 import CanvasData from "@/app/Services/CanvasData";
 import Action from "@/app/Services/Agent/Actions/Action";
-import {Commands} from "@/app/View/commads";
-import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert"
+import {Commands} from "@/app/View/Commands/commads";
 import Statement from "@/app/Services/Statement/Statement";
 import ArgumentAgentCoordinates from "@/app/Services/Agent/Arguments/ArgumentAgentCoordinates";
 import ArgumentCoordinates from "@/app/Services/Agent/Arguments/ArgumentCoordinates";
@@ -23,7 +22,6 @@ interface Agent {
         x: number,
         y: number
     },
-    currentCommand: string,
     focused: {
         commandUuid: string,
         actionUuid: string | number
@@ -38,11 +36,17 @@ export const Canvas = ({}) => {
         xMultiplierModifier = 100,
         yMultiplierModifier = 100;
 
+    const [commandsViewerUuid, updateUuid] = useState(uuidv4())
     const canvasData = new CanvasData(5, 5);
 
     const agent1 = new AgentData("agent1")
     agent1.height = 50;
     agent1.width = 50;
+
+    const [hasChanges, setHasChanges] = useState(false);
+    const [isRunning, setIsRunning] = useState(true);
+    const [controlButtonText, setControlButtonText] = useState("Start");
+    const [hasChangesUuid, setHasChangesUuid] = useState(false);
 
     const [agents, setAgents] = useState<[Agent]>(
         [
@@ -52,7 +56,6 @@ export const Canvas = ({}) => {
                     y: 0,
                 },
                 agentData: agent1,
-                currentCommand: "none",
                 focused: {
                     commandUuid: 'none',
                     actionUuid: 'none'
@@ -67,16 +70,16 @@ export const Canvas = ({}) => {
                             new MasterRule(RULE_LESS_OR_EQUAL)
                         ),
                         actions: [
-                            ActionMoveRight,
-                            ActionMoveRight
+                            new ActionMoveRight(),
+                            new ActionMoveRight()
                         ]
                     },
                     {
                         uuid: uuidv4(),
                         type: COMMAND_JUST_EXECUTE,
                         actions: [
-                            ActionMoveDown,
-                            ActionMoveDown
+                            new ActionMoveDown(),
+                            new ActionMoveDown()
                         ]
                     },
                 ]
@@ -84,14 +87,17 @@ export const Canvas = ({}) => {
         ]
     );
 
-    useEffect(() => {
-        const process = async (counter: number) => {
 
-            for (let agentI = 0; agentI <= agents.length - 1; agentI++) {
-                let agent = agents[agentI];
+    const process = async (counter: number) => {
+        setIsRunning(false)
+        console.log(isRunning)
+        setHasChanges(false)
 
-                let iCounter = 0;
+        for (let agentI = 0; agentI <= agents.length - 1; agentI++) {
+            let agent = agents[agentI];
+            let iCounter = 0;
 
+            if (isRunning) {
                 for await (let stack of agent.stack) {
                     console.log("stack started " + iCounter)
 
@@ -104,14 +110,18 @@ export const Canvas = ({}) => {
                             let actionCounter = 0;
 
                             for await (let action of stack.actions) {
-                                agent.currentCommand = action.title
+
+
+
                                 agent.focused.commandUuid = stack.uuid
                                 agent.focused.actionUuid = actionCounter
 
                                 const bbb = new Promise((resolve, reject) => {
-                                    const instance: Action = (new action(agent.agentData, canvasData));
+                                    const instance: Action = action;
+                                    instance.init(agent.agentData, canvasData)
 
                                     if (instance.isExecutable()) {
+                                        setHasChanges(true)
                                         agent.agentData = instance.execute()
                                     }
 
@@ -140,14 +150,15 @@ export const Canvas = ({}) => {
 
                             for await (let action of stack.actions) {
 
-                                agent.currentCommand = action.title
                                 agent.focused.commandUuid = stack.uuid
                                 agent.focused.actionUuid = actionCounter
 
                                 const bbb = new Promise((resolve, reject) => {
-                                    const instance: Action = (new action(agent.agentData, canvasData));
+                                    const instance: Action = action;
+                                    instance.init(agent.agentData, canvasData)
 
                                     if (instance.isExecutable()) {
+                                        setHasChanges(true)
                                         agent.agentData = instance.execute()
                                     }
 
@@ -175,10 +186,11 @@ export const Canvas = ({}) => {
                         if (stack.type === COMMAND_FOR) {
                             for (let i = 0; i <= stack.props.interactions - 1; i++) {
                                 stack.actions.map((action: Action) => {
-                                    agent.currentCommand = action.title
-                                    const instance = (new action(agent.agentData, canvasData));
+                                    const instance: Action = action;
+                                    instance.init(agent.agentData, canvasData)
 
                                     if (instance.isExecutable()) {
+                                        setHasChanges(true)
                                         // instance.execute()
                                     }
                                 })
@@ -189,17 +201,22 @@ export const Canvas = ({}) => {
 
                         setTimeout(() => {
                             resolve(true)
-                        }, 1000)
+                        }, 2000)
                     });
 
                     await executeCommandPromise.then(() => iCounter++)
                 }
+            }
 
-                if (agentI === agents.length - 1 && counter !== 100) {
-                    setTimeout(() => process(++counter), 1000)
-                }
+            if (agentI === agents.length - 1 && counter !== 100) {
+                setTimeout(() =>
+                        process(++counter),
+                    1000)
             }
         }
+    }
+    useEffect(() => {
+
 
         return () => {
             process(0).then(r => {
@@ -207,21 +224,71 @@ export const Canvas = ({}) => {
             return;
         }
 
-    }, [])
+    }, [isRunning, process])
 
+    const onClick = () => {
 
+        setIsRunning(!isRunning)
+
+        if (isRunning) {
+            setControlButtonText("Start")
+        } else {
+            setControlButtonText("Stop and Reset")
+        }
+    }
+
+    const onDeleteHandler = (commandI: number, actionI: number) => {
+        let agentI: number = 0;
+        let agent = agents[agentI],
+            actions = agents[agentI].stack[commandI].actions;
+
+        actions.splice(actionI, 1)
+
+        agent.stack[commandI].actions = actions;
+
+        console.log(agent.stack[commandI])
+
+        setAgents(prevState => {
+            // modifiedAgents
+            let newState = [...prevState]
+            newState[agentI] = agent
+            return newState
+        })
+
+        updateUuid(uuidv4())
+    }
+
+    const onCreateHandler = (commandI: number, action: Action) => {
+
+        console.log()
+
+        let agentI: number = 0;
+        let agent = agents[agentI],
+            actions = agents[agentI].stack[commandI].actions;
+
+        actions.push(new action())
+
+        agent.stack[commandI].actions = actions;
+
+        setAgents(prevState => {
+            // modifiedAgents
+            let newState = [...prevState]
+            newState[agentI] = agent
+            return newState
+        })
+
+        updateUuid(uuidv4())
+    }
     return (
         <div>
             <svg
-                className="h-[100vh] w-[100vw]"
+                className="h-[100vh] w-[100vw] canvas"
             >
                 <g
                     style={{
                         transform: "translateX(100px) translateY(100px)",
                     }}
                 >
-
-
                     {agents.map((agent, y) => (
                         <Agent
                             key={agent.agentData.id}
@@ -233,7 +300,6 @@ export const Canvas = ({}) => {
                         />
                     ))}
 
-
                     {[...Array(canvasData.sizeX)].map((i, x) =>
                         [...Array(canvasData.sizeY)].map((i, y) =>
                             <Layer id={x.toString() + y.toString()} x={x * xMultiplierModifier}
@@ -243,34 +309,23 @@ export const Canvas = ({}) => {
                 </g>
             </svg>
 
-
-            <div style={{
-                position: "absolute",
-                right: "20%",
-                top: "20%",
-                width: "300px"
-            }}>
-                <Alert>
-                    <AlertTitle>Message</AlertTitle>
-                    <AlertDescription>
-                        You can add components and dependencies to your app using the cli.
-                    </AlertDescription>
-                </Alert>
+            <div className="sidebar">
+                <button onClick={onClick}>{controlButtonText}</button>
+                <div>
+                    {!hasChanges ? "PROBLEM! infinite loop" : ""}
+                </div>
 
                 {agents.map((agent, y) => (
-                    // eslint-disable-next-line react/jsx-key
-                    <div>
-                        <div className="rounded-md border px-4 py-2 font-mono text-sm shadow-sm">
-                            current: {agent.currentCommand}
-                        </div>
-                        <Commands stack={agent.stack} focusedCommandUuid={agent.focused.commandUuid}
-                                  focusedActionUuid={agent.focused.actionUuid}/>
-                    </div>
+                    <Commands
+                        key={commandsViewerUuid}
+                        stack={agent.stack}
+                        focusedCommandUuid={agent.focused.commandUuid}
+                        focusedActionUuid={agent.focused.actionUuid}
+                        onDelete={onDeleteHandler}
+                        onCreate={onCreateHandler}
+                    />
+
                 ))}
-
-                {/*<Button>Click me</Button>*/}
-
-
             </div>
         </div>
     );

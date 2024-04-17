@@ -5,10 +5,7 @@ import ArgumentAgentCoordinates from "@/app/Services/Agent/Arguments/ArgumentAge
 import Coordinates from "@/app/Services/Data/Coordinates";
 
 export default class Statement {
-
-    protected _argumentA: Argument;
-    protected _argumentB: Argument;
-    protected _rule: MasterRule;
+    private readonly _rule: MasterRule;
 
     constructor(argumentA: Argument, argumentB: Argument, rule: MasterRule) {
         this._argumentA = argumentA;
@@ -16,16 +13,32 @@ export default class Statement {
         this._rule = rule;
     }
 
-    public verify():boolean {
+    get rule(): MasterRule {
+        return this._rule;
+    }
+
+    private _argumentA: Argument;
+
+    get argumentA(): Argument {
+        return this._argumentA;
+    }
+
+    private _argumentB: Argument;
+
+    get argumentB(): Argument {
+        return this._argumentB;
+    }
+
+    public verify(): boolean {
         return this._rule.execute(this._argumentA, this._argumentB);
     }
 
     public updateData(agent: AgentData) {
-        if(this._argumentA instanceof ArgumentAgentCoordinates) {
+        if (this._argumentA instanceof ArgumentAgentCoordinates) {
             this._argumentA = new ArgumentAgentCoordinates(new Coordinates(agent.coordinateX, agent.coordinateY));
         }
 
-        if(this._argumentB instanceof ArgumentAgentCoordinates) {
+        if (this._argumentB instanceof ArgumentAgentCoordinates) {
             this._argumentB = new ArgumentAgentCoordinates(new Coordinates(agent.coordinateX, agent.coordinateY));
         }
     }

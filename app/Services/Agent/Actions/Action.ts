@@ -3,38 +3,45 @@ import CanvasData from "@/app/Services/CanvasData";
 import {v4 as uuidv4} from 'uuid';
 
 export default class Action {
+    protected _agentData: AgentData | undefined;
+    protected _canvasData: CanvasData | undefined;
+
+    public constructor() {
+        this._uuid = uuidv4();
+    }
+
+    private _uuid: string;
+
     get uuid(): string {
         return this._uuid;
     }
 
-    protected _agentData: AgentData;
-    protected _canvasData: CanvasData;
-    private readonly _uuid: string;
+    protected _key: string = "ACTION:KEY";
 
-    public constructor(agentData: AgentData, canvasData: CanvasData) {
-        this._agentData = agentData;
-        this._canvasData = canvasData;
-        this._uuid = uuidv4();
-    }
-
-    protected static _key: string = "ACTION:KEY";
-
-    static get key(): string {
+    get key(): string {
         return this._key;
     }
 
-    protected static _title: string = "ACTION:TITLE";
+    protected _title: string = "ACTION:TITLE";
 
-    static get title(): string {
-        return this._title;
+    get title(): string {
+        return this._title
     }
 
-    public execute(): AgentData {
+    public updateUuid(): void {
+        this._uuid = uuidv4();
+    }
+
+    public init(agentData: AgentData, canvasData: CanvasData) {
+        this._agentData = agentData;
+        this._canvasData = canvasData;
+    }
+
+    public execute(): AgentData | undefined {
         return this._agentData
     }
 
     public isExecutable(): boolean {
         return true;
     }
-
 }

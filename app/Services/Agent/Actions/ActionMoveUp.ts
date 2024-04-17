@@ -3,17 +3,18 @@ import AgentData from "@/app/Services/Agent/AgentData";
 import CanvasData from "@/app/Services/CanvasData";
 
 export default class ActionMoveUp extends Action {
-    protected static _title:string = "ACTION:UP";
-    constructor(agentData: AgentData, canvasData: CanvasData) {
-        super(agentData, canvasData);
-    }
+    protected  _title: string = "ACTION:UP";
+
 
     public execute() {
-        this._agentData.coordinateY =  this._agentData.coordinateY - 1;
+        this._agentData.coordinateY = this._agentData.coordinateY - 1;
         return this._agentData
     }
 
     public isExecutable() {
+        if (this._agentData == undefined || this._canvasData === undefined) {
+            return false
+        }
         return (this._agentData.coordinateY - 1) >= 0;
     }
 }

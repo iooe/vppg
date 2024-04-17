@@ -1,11 +1,15 @@
 import Argument from "@/app/Services/Agent/Arguments/Argument";
 import Coordinates from "@/app/Services/Data/Coordinates";
 
-export const RULE_GREATER_OR_EQUAL = "RULE_GREATER_OR_EQUAL";
-export const RULE_LESS_OR_EQUAL = "RULE_LESS_OR_EQUAL";
-export const RULE_EQUAL = "RULE_EQUAL";
+export const RULE_GREATER_OR_EQUAL = ">=";
+export const RULE_LESS_OR_EQUAL = "<=";
+export const RULE_EQUAL = "===";
+export const RULE_NOT_EQUAL = "!==";
 
 export default class MasterRule {
+    get key(): string {
+        return this._key;
+    }
 
     private readonly _key: string;
 
@@ -33,7 +37,12 @@ export default class MasterRule {
 
                 return (argumentA.value.getX() === argumentB.value.getX()) && (argumentA.value.getY() === argumentB.value.getY())
             }
+        }
 
+        if (this._key === RULE_NOT_EQUAL) {
+            if (argumentA.value instanceof Coordinates) {
+                return (argumentA.value.getX() !== argumentB.value.getX()) || (argumentA.value.getY() !== argumentB.value.getY())
+            }
         }
 
         return false;
