@@ -1,9 +1,18 @@
-export default class AgentData {
-    constructor(id: string) {
-        this._id = id;
-    }
 
+interface AgentProps {
+    id: string;
+    width: number,
+    height: number,
+}
+
+export default class AgentData {
     private readonly _id: string;
+
+    constructor(props: AgentProps) {
+        this._id = props.id;
+        this._width = props.width;
+        this._height = props.height;
+    }
 
     get id(): string {
         return this._id;
@@ -47,6 +56,17 @@ export default class AgentData {
 
     public set coordinateY(value: number) {
         this._coordinateY = value;
+    }
+
+    public copy() {
+        const agent = new AgentData({id: this._id, width: this._width, height: this._height})
+
+        agent.width = this._width
+        agent.height = this._height
+        agent.coordinateY = this._coordinateY
+        agent.coordinateX = this._coordinateX
+
+        return agent;
     }
 
     public setCoordinateY(value: number) {

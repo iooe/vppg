@@ -3,7 +3,8 @@ import {useDraggable} from '@dnd-kit/core';
 import {CSS} from '@dnd-kit/utilities';
 import Action from "../../Services/Agent/Actions/Action";
 
-export function DraggableNewAction(props) {
+export const DRAGGABLE_TYPE_PLACEHOLDER_COMMAND = 'placeholder-command';
+export function DraggablePlaceholderCommand(props) {
     const {attributes, listeners, setNodeRef, transform} = useDraggable({
         id: props.id,
         data: {

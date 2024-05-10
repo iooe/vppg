@@ -3,7 +3,7 @@ import AgentData from "@/app/Services/Agent/AgentData";
 import CanvasData from "@/app/Services/CanvasData";
 
 export default class ActionMoveUp extends Action {
-    protected  _title: string = "ACTION:UP";
+    protected  _title: string = "Step Up";
 
 
     public execute() {

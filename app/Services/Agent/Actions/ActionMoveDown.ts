@@ -1,9 +1,7 @@
 import Action from "@/app/Services/Agent/Actions/Action";
-import AgentData from "@/app/Services/Agent/AgentData";
-import CanvasData from "@/app/Services/CanvasData";
 
 export default class ActionMoveDown extends Action {
-    protected  _title: string = "ACTION:DOWN";
+    protected _title: string = "Step Down";
 
     public execute() {
         this._agentData.coordinateY = this._agentData.coordinateY + 1;

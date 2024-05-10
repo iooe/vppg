@@ -1,13 +1,11 @@
 import Action from "@/app/Services/Agent/Actions/Action";
-import AgentData from "@/app/Services/Agent/AgentData";
-import CanvasData from "@/app/Services/CanvasData";
 
 export default class ActionMoveLeft extends Action {
-    protected  _title:string = "ACTION:LEFT";
+    protected _title: string = "Step Left";
 
 
     public execute() {
-        this._agentData.coordinateX =  this._agentData.coordinateX - 1;
+        this._agentData.coordinateX = this._agentData.coordinateX - 1;
         return this._agentData
     }
 

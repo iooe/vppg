@@ -1,13 +1,29 @@
 import AgentData from "@/app/Services/Agent/AgentData";
 import CanvasData from "@/app/Services/CanvasData";
 import {v4 as uuidv4} from 'uuid';
+import MyUtils from "@/app/Services/Core/MyUtils";
 
 export default class Action {
     protected _agentData: AgentData | undefined;
     protected _canvasData: CanvasData | undefined;
+    protected readonly _afterExecutionCallback: Function;
 
-    public constructor() {
+    // public constructor(props: Props = {}) {
+    //     this._uuid = uuidv4();
+    //
+    //     console.log(111111111111111)
+    //     if (props.callback !== undefined) {
+    //         console.log(123123123123)
+    //         this._func = Object.assign(() => {}, props.callback);
+    //     }
+    // }
+
+    public constructor(
+        afterExecutionCallback: Function = () => {
+        },
+    ) {
         this._uuid = uuidv4();
+        this._afterExecutionCallback = afterExecutionCallback
     }
 
     private _uuid: string;
@@ -28,6 +44,12 @@ export default class Action {
         return this._title
     }
 
+    setTitle(...args: string[]) {
+        this._title = MyUtils.replacePlaceholders(this._title, ...args);
+
+        return this
+    }
+
     public updateUuid(): void {
         this._uuid = uuidv4();
     }
@@ -37,7 +59,9 @@ export default class Action {
         this._canvasData = canvasData;
     }
 
+
     public execute(): AgentData | undefined {
+        this._agentData = this._afterExecutionCallback(this._agentData);
         return this._agentData
     }
 

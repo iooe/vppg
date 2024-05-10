@@ -3,7 +3,7 @@ import AgentData from "@/app/Services/Agent/AgentData";
 import CanvasData from "@/app/Services/CanvasData";
 
 export default class ActionMoveRight extends Action {
-    protected  _title:string = "ACTION:RIGHT";
+    protected  _title:string = "Step Right";
 
 
     public execute() {

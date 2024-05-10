@@ -1,5 +1,6 @@
 import Argument from "@/app/Services/Agent/Arguments/Argument";
 import Coordinates from "@/app/Services/Data/Coordinates";
+import Variable from "@/app/Services/Variable/Variable";
 
 export const RULE_GREATER_OR_EQUAL = ">=";
 export const RULE_LESS_OR_EQUAL = "<=";
@@ -18,30 +19,49 @@ export default class MasterRule {
     }
 
     public execute(argumentA: Argument, argumentB: Argument) {
-        if (this._key === RULE_GREATER_OR_EQUAL) {
-            if (argumentA.value instanceof Coordinates) {
 
+        if (this._key === RULE_GREATER_OR_EQUAL) {
+            if (argumentA.getSource() instanceof Coordinates) {
                 return (argumentA.value.getX() >= argumentB.value.getX()) && (argumentA.value.getY() >= argumentB.value.getY())
+            }
+
+            if (argumentA.getSource() instanceof Variable) {
+                return argumentA.value >= argumentB.value
             }
         }
 
         if (this._key === RULE_LESS_OR_EQUAL) {
-            if (argumentA.value instanceof Coordinates) {
-
+            if (argumentA.getSource() instanceof Coordinates) {
                 return (argumentA.value.getX() <= argumentB.value.getX()) && (argumentA.value.getY() <= argumentB.value.getY())
+            }
+
+            if (argumentA.getSource() instanceof Variable) {
+                return argumentA.value <= argumentB.value
             }
         }
 
         if (this._key === RULE_EQUAL) {
-            if (argumentA.value instanceof Coordinates) {
-
+            if (argumentA.getSource() instanceof Coordinates) {
                 return (argumentA.value.getX() === argumentB.value.getX()) && (argumentA.value.getY() === argumentB.value.getY())
+            }
+
+            if (argumentA.getSource() instanceof Variable) {
+                return argumentA.value === argumentB.value
             }
         }
 
         if (this._key === RULE_NOT_EQUAL) {
-            if (argumentA.value instanceof Coordinates) {
+            if (argumentA.getSource() instanceof Coordinates) {
                 return (argumentA.value.getX() !== argumentB.value.getX()) || (argumentA.value.getY() !== argumentB.value.getY())
+            }
+
+            console.log(11111)
+            console.log(argumentA.getSource())
+            console.log(22222)
+
+            if (argumentA.getSource() instanceof Variable) {
+
+                return argumentA.value !== argumentB.value
             }
         }
 
