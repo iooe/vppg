@@ -48,6 +48,9 @@ export default class Variable {
     private _value: any;
 
     get value(): any {
+        if(this._type === VARIABLE_TYPE_NUMBER) {
+            return Number.parseInt(this._value)
+        }
         return this._value;
     }
 

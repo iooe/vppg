@@ -10,7 +10,7 @@ import Action from "@/app/Services/Agent/Actions/Action";
 import {Commands} from "@/app/View/Commands/commads-viewer";
 import Statement from "@/app/Services/Statement/Statement";
 import MasterRule, {RULE_EQUAL, RULE_NOT_EQUAL} from "@/app/Services/Agent/Rules/MasterRule";
-import {COMMAND_IF, COMMAND_JUST_EXECUTE} from "@/app/Services/Agent/Commands";
+import {COMMAND_FOR, COMMAND_IF, COMMAND_JUST_EXECUTE} from "@/app/Services/Agent/Commands";
 import {v4 as uuidv4} from 'uuid';
 import Variable, {
     VARIABLE_TYPE_BOOLEAN,
@@ -25,14 +25,17 @@ import ActionMoveRight from "@/app/Services/Agent/Actions/ActionMoveRight";
 import TickProcessor from "@/app/Services/Core/TickProcessor";
 import ArgumentString from "@/app/Services/Agent/Arguments/ArgumentString";
 import ActionIncrementVariable from "@/app/Services/Agent/Actions/ActionIncrementVariable";
-import Item, {ITEM_TYPE_APPLE, ITEM_TYPE_BOX, ITEM_TYPE_COIN} from "@/app/Services/Item/Item";
+import Item, {ITEM_TYPE_APPLE, ITEM_TYPE_BOX, ITEM_TYPE_COIN, ITEM_TYPE_DOOR} from "@/app/Services/Item/Item";
 import {CanvasItem} from "@/app/View/Canvas/canvas-item";
 import {ResizableHandle, ResizablePanel, ResizablePanelGroup,} from "@/components/ui/resizable"
-import {Button} from "@/components/ui/button";
 import {TypographyDemo} from "@/app/View/TypographyDemo";
 import ActionCollectItem from "@/app/Services/Agent/Actions/ActionCollectItem";
 import {CommandDialogIncVar} from "@/app/View/Commands/CommandDiaglogs/command-dialog-inc-var";
 import ActionDecrementVariable from "@/app/Services/Agent/Actions/ActionDecrementVariable";
+import {TheNavbar} from "@/app/View/Menu/TheNavbar";
+import {NavigationMenuLink} from "@/components/ui/navigation-menu";
+import Link from "next/link";
+import {TheCompletedDialog} from "@/app/View/Level/TheCompletedDialog";
 
 interface Agent {
     position: {
@@ -53,7 +56,8 @@ export const Canvas = ({}) => {
             items: [
                 new Item(ITEM_TYPE_APPLE).setCoordinates(0, 2),
                 new Item(ITEM_TYPE_BOX).setCoordinates(2, 4),
-                new Item(ITEM_TYPE_COIN).setCoordinates(3, 1)
+                new Item(ITEM_TYPE_COIN).setCoordinates(3, 1),
+                new Item(ITEM_TYPE_DOOR).setCoordinates(0, 0),
             ],
             canvas: {
                 size: 120
@@ -105,6 +109,7 @@ export const Canvas = ({}) => {
 
     const
         [hasChanges, setHasChanges] = useState(false),
+        [isWinner, setIsWinner] = useState(false),
         [isWorking, setIsWorking] = useState(false),
         [isRunning, setIsRunning] = useState(false),
         [controlButtonText, setControlButtonText] = useState("Stop and Reset"),
@@ -159,6 +164,17 @@ export const Canvas = ({}) => {
                                     updateVariable("b_var", false)
                                 })
                                     .setTitle("b_var", 'false')
+                            ]
+                        },
+                        {
+                            uuid: uuidv4(),
+                            type: COMMAND_FOR,
+                            props: {
+                                interactions: 3
+                            },
+                            actions: [
+                                new ActionMoveRight(),
+                                new ActionMoveRight(),
                             ]
                         },
                         // {
@@ -278,7 +294,7 @@ export const Canvas = ({}) => {
                             controller()
                         }, 100)
                     },
-                    1000)
+                    500)
             })
             .catch(() => {
                 console.log("SYSTEM " + 5)
@@ -296,9 +312,9 @@ export const Canvas = ({}) => {
 
     useEffect(() => {
         if (isRunning) {
-            setControlButtonText("Stop and Reset")
+            setControlButtonText("Stop & Reset")
         } else {
-            setControlButtonText("Start")
+            setControlButtonText("Play Code")
         }
     }, [isRunning])
 
@@ -366,7 +382,8 @@ export const Canvas = ({}) => {
                             onClose={() => setDialog(<CommandDialogIncVar
                                 config={{className: '', commandIndex: -1}}
                                 onChange={handlers.actions.create}
-                                onClose={() => {}}
+                                onClose={() => {
+                                }}
                                 isOpened={false}
                             />)}
                             isOpened={true}
@@ -431,7 +448,8 @@ export const Canvas = ({}) => {
                         config={{className: '', commandIndex: -1}}
                         onChange={handlers.actions.create}
                         isOpened={false}
-                        onClose={() => {}}
+                        onClose={() => {
+                        }}
                     />)
                 },
             },
@@ -540,13 +558,65 @@ export const Canvas = ({}) => {
     window.handlers = handlers;
 
     const [dialog, setDialog] = useState(
-        <CommandDialogIncVar
-            onChange={handlers.actions.create}
-            config={{className: '', commandIndex: -1}}
-            isOpened={false}
-            onClose={() => {}}
-        />
-    )
+            <CommandDialogIncVar
+                onChange={handlers.actions.create}
+                config={{className: '', commandIndex: -1}}
+                isOpened={false}
+                onClose={() => {
+                }}
+            />
+        ),
+        [completedDialog, setCompletedDialog] = useState(
+            <TheCompletedDialog
+                isOpened={false}
+                onClose={() => {
+                }}
+            />
+        )
+
+    const timer = setInterval(() => {
+        if (isWinner) {
+            return
+        }
+
+        let state = true;
+        const variable = getVariable('item-counter');
+
+        if (variable === undefined) {
+            state = false
+        } else {
+
+            if (variable.value !== 3) {
+                state = false
+            }
+        }
+
+
+        const hasIndex = items.findIndex(
+            (item) => ((item.type === ITEM_TYPE_APPLE || item.type === ITEM_TYPE_BOX) && !item.isCollected)
+                || (item.type === ITEM_TYPE_COIN && item.isCollected)
+        )
+
+        if (hasIndex !== -1) {
+            state = false
+        }
+
+        if (agents.findIndex((agent) => agent.agentData.coordinateX === 0 && agent.agentData.coordinateY === 0) === -1) {
+            state = false
+        }
+
+        setIsWinner(state)
+
+        if (state) {
+
+            setCompletedDialog(<TheCompletedDialog
+                isOpened={true}
+                onClose={() => {
+                }}
+            />)
+            onClick();
+        }
+    }, 200)
 
     return (
 
@@ -556,12 +626,28 @@ export const Canvas = ({}) => {
 
             <ResizablePanel>
 
+                <TheNavbar
+                    title={'The Joke Tax Chronicles'}
+                    controlView={
+                        <Link href="#" legacyBehavior passHref>
+                            <NavigationMenuLink onClick={onClick} className={'nav-item--button'}>
+                                {/*<RiPlayFill size={18}*/}
+                                {/*            color="#000"/>*/}
+
+                                <span>{controlButtonText}</span>
+                            </NavigationMenuLink>
+                        </Link>}
+                />
                 <div className={'polka-background'}></div>
 
-                <Button variant={'outline'} onClick={onClick}>{controlButtonText}</Button>
+
                 <div style={{position: "absolute", top: 0, right: 0}}>
                     {!hasChanges ? "PROBLEM! infinite loop" : ""}
                 </div>
+
+                {/*<div style={{position: "absolute", top: 0, left: 0}}>*/}
+                {/*    is win {isWinner ? "YES" : "NO"}*/}
+                {/*</div>*/}
 
                 <svg
                     className="h-[100vh] w-[100vw] canvas not-selectable">
@@ -610,11 +696,8 @@ export const Canvas = ({}) => {
                 boxShadow: "rgba(240, 46, 170, 0.4) -5px 5px, rgba(240, 46, 170, 0.3) -10px 10px, rgba(240, 46, 170, 0.2) -15px 15px, rgba(240, 46, 170, 0.1) -20px 20px, rgba(240, 46, 170, 0.05) -25px 25px;"
             }}>
 
+                {completedDialog}
                 {dialog}
-                {/*<CommandDialogIncVar*/}
-                {/*    onChange={(key: string) => handlers.dialogs.onSubmit(key)}*/}
-                {/*    isOpened={dialogStates.incVariable}*/}
-                {/*/>*/}
 
                 <div className="sidebar">
 

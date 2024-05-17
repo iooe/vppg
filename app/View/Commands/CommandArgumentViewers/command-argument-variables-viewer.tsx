@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import {ReactElement} from "react"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,7 +14,7 @@ import ArgumentVariable from "@/app/Services/Agent/Arguments/ArgumentVariable";
 
 export function CommandArgumentVariablesViewer(props: {
     argument: Argument,
-    argumentView: string,
+    argumentView: ReactElement,
     onChange: Function,
     onOpen: Function,
     onClosed: Function,
@@ -27,6 +28,7 @@ export function CommandArgumentVariablesViewer(props: {
         ]),
         methods = {
             onOpenChange: (open: boolean) => {
+                // @ts-ignore
                 setVariables(window.handlers.variables.all().map(v => v.key))
                 if (open) {
                     props.onOpen()
@@ -41,7 +43,7 @@ export function CommandArgumentVariablesViewer(props: {
                 props.onChange(new ArgumentVariable(value))
             },
         }
-
+    // @ts-ignore
     setTimeout(() => setVariables(window.handlers.variables.all().map(v => v.key)), 100)
 
     return (

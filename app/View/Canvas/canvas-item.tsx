@@ -15,7 +15,8 @@ interface TextProps {
 }
 import appleSrc from './../../Images/apple.png';
 import boxSrc from './../../Images/isometric-box.png';
-import coinSrc from './../../Images/isometric-coin.png';
+import coinSrc from '../../Images/coin.png';
+import doorSrc from './../../Images/isometric-door.png';
 
 export const CanvasItem = ({id, x, y, width, height, type}: TextProps) => {
 
@@ -27,6 +28,8 @@ export const CanvasItem = ({id, x, y, width, height, type}: TextProps) => {
                 return boxSrc
             case 'coin':
                 return coinSrc
+            case 'door':
+                return doorSrc
             default:
                 return 'ITEM_ICON'
         }

@@ -121,7 +121,7 @@ export default class TickProcessor {
                     } else {
                         setTimeout(() => {
                             resolve(true)
-                        }, 850)
+                        }, 250)
                     }
                 });
 

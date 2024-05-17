@@ -1,13 +1,13 @@
 "use client"
 
 import * as React from "react"
-import {useState} from "react"
+import {ReactElement, useState} from "react"
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Input} from "@/components/ui/input";
 
 export function CommandArgumentStringViewer(props: {
     value: string,
-    argumentView: string,
+    argumentView: ReactElement,
     onChange: Function,
     onOpen: Function,
     onClosed: Function,

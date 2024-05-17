@@ -5,6 +5,8 @@ export function TypographyDemo() {
 
 
     <ScrollArea className="h-[200px] w-[350px] rounded-md border p-4 typography-demo">
+
+
             <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
                 The Joke Tax Chronicles
             </h1>

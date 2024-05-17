@@ -4,13 +4,17 @@ import AgentData from "@/app/Services/Agent/AgentData";
 import ArgumentAgentCoordinates from "@/app/Services/Agent/Arguments/ArgumentAgentCoordinates";
 import Coordinates from "@/app/Services/Data/Coordinates";
 import ArgumentVariable from "@/app/Services/Agent/Arguments/ArgumentVariable";
+import {rule} from "postcss";
 
 export enum STATEMENT_CALLBACKS {
     GET_VARIABLE,
     GET_AGENT_COORDINATES
 }
 export default class Statement {
-    private readonly _rule: MasterRule;
+    set rule(value: MasterRule) {
+        this._rule = value;
+    }
+    private _rule: MasterRule;
     private callbacks = {}
 
     constructor(argumentA: Argument, argumentB: Argument, rule: MasterRule) {

@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import {ReactElement} from "react"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -8,20 +9,18 @@ import {
     DropdownMenuRadioItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import Argument from "@/app/Services/Agent/Arguments/Argument";
-import ArgumentBoolean from "@/app/Services/Agent/Arguments/ArgumentBoolean";
-import {ReactElement} from "react";
+import MasterRule, {RULES} from "@/app/Services/Agent/Rules/MasterRule";
 
-export function CommandArgumentBooleanViewer(props: {
-    argument: Argument,
-    argumentView: ReactElement,
+export function CommandArgumentRuleViewer(props: {
+    ruleKey: string,
+    view: ReactElement,
     onChange: Function,
     onOpen: Function,
     onClosed: Function,
     shouldOpenDefault: boolean
 }) {
-    const [cursor, setCursor] = React.useState(props.argument.value),
-        [variables, setVariables] = React.useState([true, false]),
+    const [cursor, setCursor] = React.useState(props.ruleKey),
+        [variables, setVariables] = React.useState(RULES),
         methods = {
             onOpenChange: (open: boolean) => {
                 if (open) {
@@ -34,14 +33,16 @@ export function CommandArgumentBooleanViewer(props: {
             onChange: (value: string) => {
                 setCursor(value)
 
-                props.onChange(new ArgumentBoolean(value))
-            }
+                props.onChange(new MasterRule(value))
+            },
         }
+
+
     return (
-        <DropdownMenu onOpenChange={methods.onOpenChange} >
+        <DropdownMenu onOpenChange={methods.onOpenChange}>
             <DropdownMenuTrigger>
                 <span>
-                    {props.argumentView}
+                    {props.view}
                 </span>
 
             </DropdownMenuTrigger>
@@ -49,8 +50,7 @@ export function CommandArgumentBooleanViewer(props: {
                 <DropdownMenuRadioGroup value={cursor} onValueChange={methods.onChange}>
                     {variables.map((value, i) => {
                         return (
-                            // @ts-ignore
-                            <DropdownMenuRadioItem key={value} value={value}>{value.toString()}</DropdownMenuRadioItem>
+                            <DropdownMenuRadioItem key={value} value={value}>{value}</DropdownMenuRadioItem>
                         )
                     })}
                 </DropdownMenuRadioGroup>

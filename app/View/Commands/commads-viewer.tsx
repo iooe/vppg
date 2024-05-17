@@ -17,7 +17,7 @@ import ActionMoveDown from "@/app/Services/Agent/Actions/ActionMoveDown";
 import ActionMoveLeft from "@/app/Services/Agent/Actions/ActionMoveLeft";
 import ActionMoveRight from "@/app/Services/Agent/Actions/ActionMoveRight";
 import {CommandTitleDefault} from "@/app/View/Commands/command-title-default";
-import {COMMAND_IF, COMMAND_JUST_EXECUTE} from "@/app/Services/Agent/Commands";
+import {COMMAND_FOR, COMMAND_IF, COMMAND_JUST_EXECUTE} from "@/app/Services/Agent/Commands";
 import {CommandTitleIf} from "@/app/View/Commands/command-title-if";
 import {
     DRAGGABLE_TYPE_PLACEHOLDER_COMMAND,
@@ -26,6 +26,8 @@ import {
 import {DRAGGABLE_TYPE_COMMAND, DraggableCommand} from "@/app/View/Draggable/DraggableCommand";
 import ActionIncrementVariable from "@/app/Services/Agent/Actions/ActionIncrementVariable";
 import ActionDecrementVariable from "@/app/Services/Agent/Actions/ActionDecrementVariable";
+import ActionCollectItem from "@/app/Services/Agent/Actions/ActionCollectItem";
+import {CommandTitleFor} from "@/app/View/Commands/command-title-for";
 
 interface Command {
     type: string,
@@ -133,6 +135,9 @@ export const Commands = memo(function Commands(props: {
 
     const [actionsPlaceholders] = useState([
             {
+                title: <p>Movements</p>
+            },
+            {
                 class: ActionMoveUp,
                 title: "[do] step up"
             },
@@ -149,6 +154,9 @@ export const Commands = memo(function Commands(props: {
                 title: "[do] step right"
             },
             {
+                title: <p>Variables</p>
+            },
+            {
                 class: ActionIncrementVariable,
                 title: "[var] increment"
             },
@@ -157,8 +165,11 @@ export const Commands = memo(function Commands(props: {
                 title: "[var] decrement"
             },
             {
-                class: ActionMoveRight,
-                title: "[do] pickup"
+                title: <p>Acts</p>
+            },
+            {
+                class: ActionCollectItem,
+                title: "[do] collect"
             }
         ]),
         [commandPlaceholders] = useState([
@@ -187,20 +198,36 @@ export const Commands = memo(function Commands(props: {
                     </h4>
 
                     <div className={`sidebar-item-body`}>
+
+
                         {actionsPlaceholders.map((actionPlaceholder, key) => {
                             return (
-                                <DraggablePlaceholderAction
-                                    id={actionPlaceholder.title + key}
-                                    class={actionPlaceholder.class}
-                                    key={actionPlaceholder.title + key}
-                                    type={DRAGGABLE_TYPE_PLACEHOLDER_ACTION}
-                                >
+                                <div key={"aaa" + key}>
+                                    {
+                                        actionPlaceholder.class === undefined
+                                            ? <p>{actionPlaceholder.title}</p>
+                                            : <DraggablePlaceholderAction
+                                                id={actionPlaceholder.title + key}
+                                                class={actionPlaceholder.class}
+                                                key={actionPlaceholder.title + key}
+                                                type={DRAGGABLE_TYPE_PLACEHOLDER_ACTION}
+                                            >
 
-                                    <Badge variant="destructive"
-                                           className="command-button command-button--blue">{actionPlaceholder.title}</Badge>
-                                </DraggablePlaceholderAction>
+                                                <Badge variant="destructive"
+                                                       className="command-button command-button--blue">{actionPlaceholder.title}</Badge>
+                                            </DraggablePlaceholderAction>
+                                    }
+                                </div>
                             )
                         })}
+
+                    </div>
+                </div>
+
+                <div className="sidebar-item sidebar-item--outlined commands-dnd">
+
+                    <div className={`sidebar-item-body`} style={{margin: "0"}}>
+
 
                         {commandPlaceholders.map((placeholder, key) => {
                             return (
@@ -218,6 +245,7 @@ export const Commands = memo(function Commands(props: {
                         })}
                     </div>
                 </div>
+
 
                 <div className={`sidebar-item sidebar-item--outlined`}>
                     <h4 className="sidebar-item-title scroll-m-20 font-medium leading-none ">
@@ -259,16 +287,35 @@ export const Commands = memo(function Commands(props: {
 
                                             {command.lineNumber}
 
+                                            {command.type === COMMAND_FOR
+                                                ? <CommandTitleFor
+                                                    commandI={i}
+                                                    // @ts-ignore
+                                                    interactions={command.props.interactions}
+                                                    onOpen={() => methods.forceUpdate(i, false)}
+                                                    onClosed={() => methods.forceUpdate(i, true)}
+
+                                                    shouldOpenDefault={command.isDraggable !== undefined && !command.isDraggable}
+                                                />
+                                                : ''
+                                            }
+
                                             {command.type === COMMAND_IF
                                                 ? <CommandTitleIf
                                                     commandI={i}
+                                                    // @ts-ignore
                                                     statement={command.statement}
                                                     onOpen={() => methods.forceUpdate(i, false)}
                                                     onClosed={() => methods.forceUpdate(i, true)}
 
                                                     shouldOpenDefault={command.isDraggable !== undefined && !command.isDraggable}
                                                 />
-                                                : <CommandTitleDefault commandType={command.type}/>
+                                                : ''
+                                            }
+
+                                            {command.type === COMMAND_JUST_EXECUTE
+                                                ? <CommandTitleDefault commandType={command.type}/>
+                                                : ''
                                             }
 
                                         </div>

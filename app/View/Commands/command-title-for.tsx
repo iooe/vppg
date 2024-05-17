@@ -20,9 +20,9 @@ import MasterRule from "@/app/Services/Agent/Rules/MasterRule";
 import {CommandArgumentRuleViewer} from "@/app/View/Commands/CommandArgumentViewers/command-argument-rule-viewer";
 import {CommandArgumentNumberViewer} from "@/app/View/Commands/CommandArgumentViewers/command-argument-number-viewer";
 
-export const CommandTitleIf = (props: {
+export const CommandTitleFor = (props: {
     commandI: number,
-    statement: Statement
+    interactions: number
     onOpen: Function,
     onClosed: Function
     shouldOpenDefault: boolean
@@ -34,33 +34,6 @@ export const CommandTitleIf = (props: {
                 changedStatement.rule = rule
                 // @ts-ignore
                 window.handlers.commands.onUpdateStatement(props.commandI, changedStatement)
-            },
-            getArgumentView: (argument: Argument) => {
-                switch (argument.constructor) {
-                    case ArgumentAgentCoordinates:
-                        return <div><RiRobot2Line
-                            size={24}
-                            color="#000"
-                            className="command-title-icon"
-                        /></div>
-                    case ArgumentCoordinates:
-                        return <span>[{argument.getSource().getX()}:{argument.getSource().getY()}]</span>
-                    case ArgumentVariable:
-
-                        if (!argument.hasSource()) {
-                            return <span>var UNDEFINED</span>
-                        }
-
-                        return <span>var {argument.getSource().key}</span>
-                    case ArgumentBoolean:
-                        return <span>{argument.value.toString()}</span>
-                    case ArgumentString:
-                        return <span>{argument.value}</span>
-                    case ArgumentNumber:
-                        return <span>{argument.value}</span>
-                    default:
-                        return <span>DEFAULT RENDER</span>
-                }
             },
             onChangeArgumentA: (argumentA: Argument) => {
                 const changedStatement = props.statement;
@@ -92,74 +65,29 @@ export const CommandTitleIf = (props: {
                 // @ts-ignore
                 window.handlers.commands.onUpdateStatement(props.commandI, changedStatement)
             }
-        },
-        argumentA = methods.getArgumentView(props.statement.argumentA),
-        argumentB = methods.getArgumentView(props.statement.argumentB);
+        }
 
 
     return (
 
         <div className="command-title-body">
-            <div>If</div>
+            <div>For</div>
 
 
             <div className={`statement-rule`}>
-                {/*<span>{argumentA}</span>*/}
-
-                {props.statement.argumentA instanceof ArgumentVariable ?
-                    <CommandArgumentVariablesViewer
-                        argumentView={argumentA}
-                        argument={props.statement.argumentA}
-                        onChange={methods.onChangeArgumentA}
-                        onOpen={props.onOpen}
-                        onClosed={props.onClosed}
-                        shouldOpenDefault={props.shouldOpenDefault}
-                    />
-                    : ''}
 
 
-                <CommandArgumentRuleViewer
-                    view={<span style={{margin: "0 5px"}}> {props.statement.rule.key} </span>}
-                    ruleKey={props.statement.rule.key}
-                    onChange={methods.onChangeRule}
-                    onOpen={props.onOpen}
-                    onClosed={props.onClosed}
-                    shouldOpenDefault={props.shouldOpenDefault}
-                />
-
-                {props.statement.argumentB instanceof ArgumentBoolean ?
-                    <CommandArgumentBooleanViewer
-                        argumentView={argumentB}
-                        argument={props.statement.argumentB}
-                        onChange={methods.onChangeArgumentB}
-                        onOpen={props.onOpen}
-                        onClosed={props.onClosed}
-                        shouldOpenDefault={props.shouldOpenDefault}
-                    />
-                    : ''}
-
-                {props.statement.argumentB instanceof ArgumentString ?
-                    <CommandArgumentStringViewer
-                        argumentView={argumentB}
-                        value={props.statement.argumentB.value}
-                        onChange={(value: string) => methods.onChangeArgumentB(new ArgumentString(value))}
-                        onOpen={props.onOpen}
-                        onClosed={props.onClosed}
-                        shouldOpenDefault={props.shouldOpenDefault}
-                    />
-                    : ''}
 
 
-                {props.statement.argumentB instanceof ArgumentNumber ?
                     <CommandArgumentNumberViewer
-                        argumentView={argumentB}
-                        value={props.statement.argumentB.value}
+                        argumentView={<span> 1 ... {props.interactions} times</span>}
+                        value={props.interactions}
                         onChange={(value: string) => methods.onChangeArgumentB(new ArgumentNumber(value))}
                         onOpen={props.onOpen}
                         onClosed={props.onClosed}
                         shouldOpenDefault={props.shouldOpenDefault}
                     />
-                    : ''}
+
             </div>
             {/*<div>{props.statement. instanceof ArgumentAgentCoordinates}</div>*/}
 

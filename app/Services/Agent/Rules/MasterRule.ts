@@ -7,6 +7,7 @@ export const RULE_LESS_OR_EQUAL = "<=";
 export const RULE_EQUAL = "===";
 export const RULE_NOT_EQUAL = "!==";
 
+export const RULES = [RULE_EQUAL, RULE_LESS_OR_EQUAL, RULE_GREATER_OR_EQUAL, RULE_NOT_EQUAL]
 export default class MasterRule {
     get key(): string {
         return this._key;

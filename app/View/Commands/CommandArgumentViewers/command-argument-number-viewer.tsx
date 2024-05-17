@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {useState} from "react"
+import {ReactElement, useState} from "react"
 import Argument from "@/app/Services/Agent/Arguments/Argument";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {Input} from "@/components/ui/input";
@@ -9,8 +9,8 @@ import ArgumentString from "@/app/Services/Agent/Arguments/ArgumentString";
 import Variable, {VARIABLE_TYPE_BOOLEAN} from "@/app/Services/Variable/Variable";
 
 export function CommandArgumentNumberViewer(props: {
-    value: string,
-    argumentView: string,
+    value: number,
+    argumentView: ReactElement,
     onChange: Function,
     onOpen: Function,
     onClosed: Function,
@@ -51,7 +51,6 @@ export function CommandArgumentNumberViewer(props: {
                 </span>
             </PopoverTrigger>
             <PopoverContent className="w-80">
-                        aaa
                         <Input type="text"
                                placeholder={'placeholder'}
                                value={value}
