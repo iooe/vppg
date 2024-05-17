@@ -13,10 +13,10 @@ interface TextProps {
     // onPointerDown: (e: React.PointerEvent, id: string) => void;
     // selectionColor?: string;
 }
-import appleSrc from './../../Images/apple.png';
-import boxSrc from './../../Images/isometric-box.png';
-import coinSrc from '../../Images/coin.png';
-import doorSrc from './../../Images/isometric-door.png';
+import appleSrc from '../../../Images/textures/apple.png';
+import boxSrc from '../../../Images/textures/isometric-box.png';
+import coinSrc from '../../../Images/textures/coin.png';
+import doorSrc from '../../../Images/textures/isometric-door.png';
 
 export const CanvasItem = ({id, x, y, width, height, type}: TextProps) => {
 

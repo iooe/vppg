@@ -1,6 +1,6 @@
 import {Input} from "@/components/ui/input";
 import React, {ChangeEventHandler, useState} from "react";
-import {VariableDropdown} from "@/app/View/Variables/variable-dropdown";
+import {VariableDropdown} from "@/app/View/AppVisualCodeModules/Variables/variable-dropdown";
 import Variable, {
     VARIABLE_TYPE_BOOLEAN,
     VARIABLE_TYPE_NUMBER,

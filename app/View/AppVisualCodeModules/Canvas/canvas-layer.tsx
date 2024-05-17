@@ -10,7 +10,7 @@ interface TextProps {
 };
 import Image from 'next/image';
 
-import src from './../../Images/floor.jpg';
+import src from '../../../Images/textures/floor.jpg';
 
 export const CanvasLayer = ({id, x, y, width, height}: TextProps) => {
 

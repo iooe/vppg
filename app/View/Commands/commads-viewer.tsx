@@ -5,13 +5,13 @@ import React, {memo, useEffect, useState} from "react";
 import {RiArrowRightLine, RiDragDropFill, RiDraggable} from "@remixicon/react";
 import {DndContext} from "@dnd-kit/core";
 import {DragEndEvent} from "@dnd-kit/core/dist/types";
-import {DRAGGABLE_TYPE_ACTION, DraggableAction} from "@/app/View/Draggable/DraggableAction";
-import {Droppable} from "@/app/View/Draggable/Droppable";
+import {DRAGGABLE_TYPE_ACTION, DraggableAction} from "@/app/View/AppVisualCodeModules/Draggable/DraggableAction";
+import {Droppable} from "@/app/View/AppVisualCodeModules/Draggable/Droppable";
 import ActionMoveUp from "@/app/Services/Agent/Actions/ActionMoveUp";
 import {
     DRAGGABLE_TYPE_PLACEHOLDER_ACTION,
     DraggablePlaceholderAction
-} from "@/app/View/Draggable/DraggablePlaceholderAction";
+} from "@/app/View/AppVisualCodeModules/Draggable/DraggablePlaceholderAction";
 import {Badge} from "@/components/ui/badge";
 import ActionMoveDown from "@/app/Services/Agent/Actions/ActionMoveDown";
 import ActionMoveLeft from "@/app/Services/Agent/Actions/ActionMoveLeft";
@@ -22,8 +22,8 @@ import {CommandTitleIf} from "@/app/View/Commands/command-title-if";
 import {
     DRAGGABLE_TYPE_PLACEHOLDER_COMMAND,
     DraggablePlaceholderCommand
-} from "@/app/View/Draggable/DraggablePlaceholderCommand";
-import {DRAGGABLE_TYPE_COMMAND, DraggableCommand} from "@/app/View/Draggable/DraggableCommand";
+} from "@/app/View/AppVisualCodeModules/Draggable/DraggablePlaceholderCommand";
+import {DRAGGABLE_TYPE_COMMAND, DraggableCommand} from "@/app/View/AppVisualCodeModules/Draggable/DraggableCommand";
 import ActionIncrementVariable from "@/app/Services/Agent/Actions/ActionIncrementVariable";
 import ActionDecrementVariable from "@/app/Services/Agent/Actions/ActionDecrementVariable";
 import ActionCollectItem from "@/app/Services/Agent/Actions/ActionCollectItem";
@@ -139,19 +139,19 @@ export const Commands = memo(function Commands(props: {
             },
             {
                 class: ActionMoveUp,
-                title: "[do] step up"
+                title: "[move] step up"
             },
             {
                 class: ActionMoveDown,
-                title: "[do] Step down"
+                title: "[move] Step down"
             },
             {
                 class: ActionMoveLeft,
-                title: "[do] Step left"
+                title: "[move] Step left"
             },
             {
                 class: ActionMoveRight,
-                title: "[do] step right"
+                title: "[move] step right"
             },
             {
                 title: <p>Variables</p>
@@ -175,11 +175,15 @@ export const Commands = memo(function Commands(props: {
         [commandPlaceholders] = useState([
             {
                 type: COMMAND_JUST_EXECUTE,
-                title: "[command] Just Execute"
+                title: "[control flow statement] Just Execute"
             },
             {
                 type: COMMAND_IF,
-                title: "[command] IF"
+                title: "[control flow statement] If"
+            },
+            {
+                type: COMMAND_FOR,
+                title: "[control flow statement] For"
             }
         ]);
 
@@ -201,14 +205,17 @@ export const Commands = memo(function Commands(props: {
 
 
                         {actionsPlaceholders.map((actionPlaceholder, key) => {
+
                             return (
                                 <div key={"aaa" + key}>
                                     {
                                         actionPlaceholder.class === undefined
                                             ? <p>{actionPlaceholder.title}</p>
                                             : <DraggablePlaceholderAction
+                                                // @ts-ignore
                                                 id={actionPlaceholder.title + key}
                                                 class={actionPlaceholder.class}
+                                                // @ts-ignore
                                                 key={actionPlaceholder.title + key}
                                                 type={DRAGGABLE_TYPE_PLACEHOLDER_ACTION}
                                             >

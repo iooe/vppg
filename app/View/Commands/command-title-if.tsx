@@ -33,7 +33,7 @@ export const CommandTitleIf = (props: {
                 const changedStatement = props.statement;
                 changedStatement.rule = rule
                 // @ts-ignore
-                window.handlers.commands.onUpdateStatement(props.commandI, changedStatement)
+                window.handlers.commands.onUpdateStatement(props.commandI, 'statement', changedStatement)
             },
             getArgumentView: (argument: Argument) => {
                 switch (argument.constructor) {
@@ -83,14 +83,14 @@ export const CommandTitleIf = (props: {
 
                 changedStatement.updateArguments(argumentA, argumentB)
                 // @ts-ignore
-                window.handlers.commands.onUpdateStatement(props.commandI, changedStatement)
+                window.handlers.commands.onUpdateStatement(props.commandI, 'statement', changedStatement)
             },
             onChangeArgumentB: (argumentB: Argument) => {
 
                 const changedStatement = props.statement;
                 changedStatement.updateArguments(changedStatement.argumentA, argumentB)
                 // @ts-ignore
-                window.handlers.commands.onUpdateStatement(props.commandI, changedStatement)
+                window.handlers.commands.onUpdateStatement(props.commandI, 'statement', changedStatement)
             }
         },
         argumentA = methods.getArgumentView(props.statement.argumentA),

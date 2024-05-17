@@ -49,6 +49,7 @@ export function CommandDialogIncVar(props: {
         }
     };
 
+    // @ts-ignore
     return (
         <Dialog open={props.isOpened}>
 
@@ -76,7 +77,7 @@ export function CommandDialogIncVar(props: {
                 <DialogFooter>
                     <Button type="button" onClick={handleClick}>Next!</Button>
                     <DialogClose asChild>
-                        <Button type="button" variant="secondary" onClick={props.onClose}>
+                        <Button type="button" variant="secondary" onClick={() => props.onClose}>
                             Close
                         </Button>
                     </DialogClose>

@@ -6,8 +6,8 @@ import Variable, {
     VARIABLE_TYPE_NUMBER,
     VARIABLE_TYPE_STRING
 } from "@/app/Services/Variable/Variable";
-import VariableCreator from "@/app/View/Variables/variable-creator";
-import {VariableEditor} from "@/app/View/Variables/variable-editor";
+import VariableCreator from "@/app/View/AppVisualCodeModules/Variables/variable-creator";
+import {VariableEditor} from "@/app/View/AppVisualCodeModules/Variables/variable-editor";
 import {CommandArgumentStringViewer} from "@/app/View/Commands/CommandArgumentViewers/command-argument-string-viewer";
 
 export const VariablesViewer = memo(function Variables(props: {

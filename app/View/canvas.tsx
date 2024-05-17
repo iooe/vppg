@@ -1,7 +1,7 @@
 "use client";
 
-import {CanvasLayer} from "@/app/View/Canvas/canvas-layer";
-import {CanvasAgent} from "@/app/View/Canvas/canvas-agent";
+import {CanvasLayer} from "@/app/View/AppVisualCodeModules/Canvas/canvas-layer";
+import {CanvasAgent} from "@/app/View/AppVisualCodeModules/Canvas/canvas-agent";
 import React, {useEffect, useState} from "react";
 import AgentData from "@/app/Services/Agent/AgentData";
 import ActionMoveDown from "@/app/Services/Agent/Actions/ActionMoveDown";
@@ -17,7 +17,7 @@ import Variable, {
     VARIABLE_TYPE_NUMBER,
     VARIABLE_TYPE_STRING
 } from "@/app/Services/Variable/Variable";
-import {VariablesViewer} from "@/app/View/Variables/variables-viewer";
+import {VariablesViewer} from "@/app/View/AppVisualCodeModules/Variables/variables-viewer";
 import ActionChangeVariable from "@/app/Services/Agent/Actions/ActionChangeVariable";
 import ArgumentVariable from "@/app/Services/Agent/Arguments/ArgumentVariable";
 import ArgumentBoolean from "@/app/Services/Agent/Arguments/ArgumentBoolean";
@@ -26,16 +26,16 @@ import TickProcessor from "@/app/Services/Core/TickProcessor";
 import ArgumentString from "@/app/Services/Agent/Arguments/ArgumentString";
 import ActionIncrementVariable from "@/app/Services/Agent/Actions/ActionIncrementVariable";
 import Item, {ITEM_TYPE_APPLE, ITEM_TYPE_BOX, ITEM_TYPE_COIN, ITEM_TYPE_DOOR} from "@/app/Services/Item/Item";
-import {CanvasItem} from "@/app/View/Canvas/canvas-item";
+import {CanvasItem} from "@/app/View/AppVisualCodeModules/Canvas/canvas-item";
 import {ResizableHandle, ResizablePanel, ResizablePanelGroup,} from "@/components/ui/resizable"
 import {TypographyDemo} from "@/app/View/TypographyDemo";
 import ActionCollectItem from "@/app/Services/Agent/Actions/ActionCollectItem";
 import {CommandDialogIncVar} from "@/app/View/Commands/CommandDiaglogs/command-dialog-inc-var";
 import ActionDecrementVariable from "@/app/Services/Agent/Actions/ActionDecrementVariable";
-import {TheNavbar} from "@/app/View/Menu/TheNavbar";
+import {TheNavbar} from "@/app/View/AppSkeleton/TheNavbar";
 import {NavigationMenuLink} from "@/components/ui/navigation-menu";
 import Link from "next/link";
-import {TheCompletedDialog} from "@/app/View/Level/TheCompletedDialog";
+import {TheCompletedDialog} from "@/app/View/AppSkeleton/Level/TheCompletedDialog";
 
 interface Agent {
     position: {
@@ -120,6 +120,7 @@ export const Canvas = ({}) => {
         ),
         // @ts-ignore
         [items, setItems] = useState<[Item]>([...DEFAULT_CONFIG.items.map(item => item.copy())]),
+        // @ts-ignore
         [agents, setAgents] = useState<[CanvasAgent]>(
             [
                 {
@@ -243,15 +244,16 @@ export const Canvas = ({}) => {
                 console.log("SYSTEM " + 2)
 
                 setTimeout(() => {
+                        // @ts-ignore
                         console.log("TEST" + isRunning + window.isRunning)
-
+                        // @ts-ignore
                         if (window.isRunning) {
                             console.log("SYSTEM " + 31)
                             setIsWorking(false)
                             controller()
                             return
                         }
-
+                        // @ts-ignore
                         setAgents(prevState => {
                             let newState = [...prevState]
 
@@ -267,11 +269,11 @@ export const Canvas = ({}) => {
                             newState[agentI] = agent
                             return newState
                         })
-
+                        // @ts-ignore
                         setItems(() => {
                             return [...DEFAULT_CONFIG.items.map(value => value.copy())]
                         })
-
+                        // @ts-ignore
                         setVariables(() => {
                             return [...DEFAULT_CONFIG.variables.map(value => value.copy())]
                         })
@@ -279,6 +281,7 @@ export const Canvas = ({}) => {
                         console.log("SYSTEM " + 32)
 
                         const timer = setInterval(() => {
+                            // @ts-ignore
                             if (!window.isRunning) {
                                 return
                             }
@@ -363,7 +366,7 @@ export const Canvas = ({}) => {
                 },
                 onCreate: (variable: Variable) => {
                     DEFAULT_CONFIG.variables.push(variable.copy())
-
+                    // @ts-ignore
                     setVariables(prevState => {
                         let newState = [...prevState]
 
@@ -374,9 +377,10 @@ export const Canvas = ({}) => {
             },
             actions: {
                 onCreate: (commandI: number, action: Action) => {
-
+                    // @ts-ignore
                     if (new action() instanceof ActionIncrementVariable || new action() instanceof ActionDecrementVariable) {
                         setDialog(<CommandDialogIncVar
+                            // @ts-ignore
                             config={{className: action, commandIndex: commandI}}
                             onChange={handlers.actions.create}
                             onClose={() => setDialog(<CommandDialogIncVar
@@ -402,7 +406,7 @@ export const Canvas = ({}) => {
                     actions.splice(actionI, 1)
 
                     agent.stack[commandI].actions = actions;
-
+                    // @ts-ignore
                     setAgents(prevState => {
                         // modifiedAgents
                         let newState = [...prevState]
@@ -416,7 +420,7 @@ export const Canvas = ({}) => {
                     let agentI: number = 0;
                     let agent = agents[agentI],
                         actions = agents[agentI].stack[commandI].actions;
-
+                    // @ts-ignore
                     let actionInstance = new action();
 
                     if (actionInstance instanceof ActionIncrementVariable) {
@@ -434,7 +438,7 @@ export const Canvas = ({}) => {
                     actions.push(actionInstance)
 
                     agent.stack[commandI].actions = actions;
-
+                    // @ts-ignore
                     setAgents(prevState => {
                         // modifiedAgents
                         let newState = [...prevState]
@@ -462,16 +466,27 @@ export const Canvas = ({}) => {
                         uuid: uuidv4(),
                         type: type,
                         actions: [],
-                        statement: new Statement(
+                    }
+
+                    if (type === COMMAND_IF) {
+                        // @ts-ignore
+                        command.statement = new Statement(
                             new ArgumentVariable('undefined'),
                             new ArgumentBoolean(true),
                             new MasterRule(RULE_NOT_EQUAL)
                         )
                     }
 
+                    if (type === COMMAND_FOR) {
+                        // @ts-ignore
+                        command.props = {
+                            interactions: 3
+                        }
+                    }
+
                     agent.stack.splice(newIndex, 0, command);
 
-
+                    // @ts-ignore
                     setAgents(prevState => {
                         // modifiedAgents
                         let newState = [...prevState]
@@ -486,7 +501,7 @@ export const Canvas = ({}) => {
                     let agent = agents[agentI];
 
                     agent.stack.splice(commandI, 1)
-
+                    // @ts-ignore
                     setAgents(prevState => {
                         // modifiedAgents
                         let newState = [...prevState]
@@ -496,17 +511,19 @@ export const Canvas = ({}) => {
 
                     updateUuid(uuidv4())
                 },
-                onUpdateStatement: (commandI: number, statement: Statement) => {
+                onUpdateStatement: (commandI: number, key: string, value: any | Statement) => {
                     const agentI: number = 0,
                         agent = agents[agentI],
                         stack = agent.stack,
                         command = agent.stack[commandI];
 
 
-                    command.statement = statement;
+                    command[key] = value
+
                     stack[commandI] = command;
                     agent.stack = stack
 
+                    // @ts-ignore
                     setAgents(prevState => {
                         // modifiedAgents
                         let newState = [...prevState]
@@ -530,7 +547,7 @@ export const Canvas = ({}) => {
 
                     const item = items[index]
                     item.collect()
-
+                    // @ts-ignore
                     setItems(prevState => {
                         // modifiedAgents
                         let newState = [...prevState]
@@ -543,18 +560,23 @@ export const Canvas = ({}) => {
             },
         },
         onClick = () => {
+            // @ts-ignore
             const value = !window.isRunning
 
             setIsRunning(value)
+            // @ts-ignore
             window.isRunning = value;
         }
 
 
+    // @ts-ignore
     window.getVariable = getVariable
+    // @ts-ignore
     window.getVariables = () => {
         return variables
     }
 
+    // @ts-ignore
     window.handlers = handlers;
 
     const [dialog, setDialog] = useState(

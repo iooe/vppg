@@ -13,7 +13,7 @@ interface TextProps {
     // selectionColor?: string;
 }
 
-import src from './../../Images/robot.png';
+import src from '../../../Images/textures/robot.png';
 
 
 export const CanvasAgent = ({id, x, y, width, height}: TextProps) => {

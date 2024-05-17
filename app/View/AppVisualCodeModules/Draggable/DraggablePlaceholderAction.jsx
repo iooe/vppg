@@ -1,7 +1,7 @@
 import React from 'react';
 import {useDraggable} from '@dnd-kit/core';
 import {CSS} from '@dnd-kit/utilities';
-import Action from "../../Services/Agent/Actions/Action";
+import Action from "../../../Services/Agent/Actions/Action";
 
 export const DRAGGABLE_TYPE_PLACEHOLDER_ACTION = 'placeholder-action';
 export function DraggablePlaceholderAction(props) {
