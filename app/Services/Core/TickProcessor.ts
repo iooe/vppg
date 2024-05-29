@@ -3,6 +3,8 @@ import {COMMAND_FOR, COMMAND_IF, COMMAND_JUST_EXECUTE} from "@/app/Services/Agen
 import {STATEMENT_CALLBACKS} from "@/app/Services/Statement/Statement";
 import AgentData from "@/app/Services/Agent/AgentData";
 import CanvasData from "@/app/Services/CanvasData";
+import LocalStorage from "@/app/Services/Core/LocalStorage";
+
 interface Agent {
     position: {
         x: number,
@@ -15,21 +17,10 @@ interface Agent {
     agentData: AgentData,
     stack: Array<any>
 }
+
 export default class TickProcessor {
 
-    private getAgents = ():Array<Agent> => {
-        return []
-    }
-
-    private getCanvasData = ():CanvasData => {
-        return new CanvasData(-1, -1);
-    }
-
-    private setAgents = (value:any):void => {
-
-    }
-
-    constructor(getAgents: Function,setAgents: Function, getCanvasData: Function) {
+    constructor(getAgents: Function, setAgents: Function, getCanvasData: Function) {
         // @ts-ignore
         this.getAgents = getAgents
         // @ts-ignore
@@ -38,49 +29,11 @@ export default class TickProcessor {
         this.setAgents = setAgents
     }
 
-    private async actionCompiler(agentI: number, agent: Agent, stackCounter: number, stackUuid: string, actions: Array<Action>) {
-        let actionCounter = 0;
-
-        for await (let action of actions) {
-
-            if (window.isRunning !== undefined && !window.isRunning) {
-                break
-            }
-
-            agent.focused.commandUuid = stackUuid;
-            agent.focused.actionUuid = actionCounter;
-
-            const bbb = new Promise((resolve, reject) => {
-                const instance: Action = action;
-                instance.init(agent.agentData, this.getCanvasData())
-
-                if (instance.isExecutable()) {
-                    // setHasChanges(true)
-                    agent.agentData = instance.execute()
-                }
-
-                this.setAgents(prevState => {
-                    // modifiedAgents
-                    let newState = [...prevState]
-                    newState[agentI] = agent
-                    return newState
-                })
-
-                console.log("stack  " + stackCounter + " action " + actionCounter + " completed")
-
-                setTimeout(() => {
-                    resolve(true)
-                }, 250)
-            })
-
-            await bbb.then(() => {
-                actionCounter++
-            })
-        }
-    }
-
-    public async process(counter:number, getVariable: Function) {
+    public async process(counter: number, getVariable: Function) {
         // setHasChanges(false)
+
+        LocalStorage.setItem('code-interactions-counter', String(0));
+
 
         const agents = this.getAgents()
 
@@ -125,7 +78,10 @@ export default class TickProcessor {
                     }
                 });
 
-                await executeCommandPromise.then(() => stackCounter++)
+                await executeCommandPromise.then(() => {
+                        stackCounter++
+                    }
+                )
             }
 
             if (agentCounter === agents.length - 1 && counter !== 100) {
@@ -133,6 +89,69 @@ export default class TickProcessor {
                     resolve(true)
                 })
             }
+        }
+    }
+
+    private incrementCodeInteractionsCounter = (): void => {
+        LocalStorage.setItem('code-interactions-counter',
+            LocalStorage.getItem('code-interactions-counter') ? String(Number.parseInt(localStorage.getItem('code-interactions-counter')) + 1) : "1"
+        );
+
+    }
+    private getAgents = (): Array<Agent> => {
+        return []
+    }
+
+    private getCanvasData = (): CanvasData => {
+        return new CanvasData(-1, -1);
+    }
+
+    private setAgents = (value: any): void => {
+
+    }
+
+    private async actionCompiler(agentI: number, agent: Agent, stackCounter: number, stackUuid: string, actions: Array<Action>) {
+        let actionCounter = 0;
+
+        for await (let action of actions) {
+            if (typeof window !== 'undefined') {
+                // @ts-ignore
+                if (window.isRunning !== undefined && !window.isRunning) {
+                    break
+                }
+            }
+
+
+            agent.focused.commandUuid = stackUuid;
+            agent.focused.actionUuid = actionCounter;
+
+            const bbb = new Promise((resolve, reject) => {
+                const instance: Action = action;
+                instance.init(agent.agentData, this.getCanvasData())
+
+                if (instance.isExecutable()) {
+                    // setHasChanges(true)
+                    agent.agentData = instance.execute()
+                }
+
+                this.setAgents(prevState => {
+                    // modifiedAgents
+                    let newState = [...prevState]
+                    newState[agentI] = agent
+                    return newState
+                })
+
+                console.log("stack  " + stackCounter + " action " + actionCounter + " completed")
+
+                setTimeout(() => {
+                    resolve(true)
+                }, 250)
+            })
+
+            await bbb.then(() => {
+                this.incrementCodeInteractionsCounter()
+                actionCounter++
+            })
         }
     }
 }

@@ -3,14 +3,6 @@ import {v4 as uuidv4} from 'uuid';
 export const ITEM_TYPE_APPLE = "apple";
 export const ITEM_TYPE_BOX = "box";
 export const ITEM_TYPE_COIN = "coin";
-export const ITEM_TYPE_DOOR = "door";
-
-export const ITEM_TYPES = [
-    ITEM_TYPE_APPLE,
-    ITEM_TYPE_BOX,
-    ITEM_TYPE_COIN,
-    ITEM_TYPE_DOOR,
-]
 export default class Item {
     private readonly _uuid: string;
 
@@ -80,7 +72,7 @@ export default class Item {
         this._isCollected = true;
     }
 
-    free() {
+    drop() {
         this._isCollected = false;
     }
 

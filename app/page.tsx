@@ -1,14 +1,11 @@
 "use client";
 
-import React, {useEffect} from 'react';
-import {Canvas} from "@/app/View/canvas";
+import React from 'react';
+import {Canvas} from "@/components/MyComponents/canvas";
+import LocalStorage from "@/app/Services/Core/LocalStorage";
 
 export default function Home() {
 
-
-    useEffect(() => {
-
-    });
 
 
     return (

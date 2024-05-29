@@ -1,0 +1,13 @@
+export default class LocalStorage {
+    static getItem(key: string): string | null {
+        if (typeof localStorage !== "undefined") {
+            return localStorage.getItem(key)
+        }
+    }
+
+    static setItem(key: string, value: string): void {
+        if (typeof localStorage !== "undefined") {
+            localStorage.setItem(key, value)
+        }
+    }
+}

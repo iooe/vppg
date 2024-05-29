@@ -18,7 +18,12 @@ export default class ArgumentVariable extends Argument {
     }
 
     public getSource(): any | undefined {
-        return window.handlers.variables.get(this._value)
+        if (typeof window !== 'undefined') {
+            // @ts-ignore
+            return window.handlers.variables.get(this._value)
+        }
+
+        return undefined
         // if (this._value instanceof Variable) {
         //     return this._value.value;
         // }

@@ -5,6 +5,7 @@ export default class ActionCollectItem extends Action {
     protected _title: string = "Collect Item";
 
     public execute() {
+        // @ts-ignore
         const items = window.handlers.items.get();
 
         const findIndex = items.findIndex(
@@ -15,12 +16,14 @@ export default class ActionCollectItem extends Action {
             return this._agentData
         }
 
+        // @ts-ignore
         window.handlers.items.collect(items[findIndex].uuid)
 
         return this._agentData
     }
 
     public isExecutable() {
+        // @ts-ignore
         const items = window.handlers.items.get();
 
         const findIndex = items.findIndex(
